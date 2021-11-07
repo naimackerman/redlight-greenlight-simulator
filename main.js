@@ -1,0 +1,161 @@
+import { OrbitControls } from "https://cdn.jsdelivr.net/npm/three@0.121.1/examples/jsm/controls/OrbitControls.js";
+import { GLTFLoader } from "https://threejsfundamentals.org/threejs/resources/threejs/r132/examples/jsm/loaders/GLTFLoader.js";
+
+/** @type {THREE.PerspectiveCamera} */
+let camera;
+/** @type {THREE.Scene} */
+let scene;
+/** @type {THREE.WebGLRenderer} */
+let renderer;
+
+let init = function() {
+    scene = new THREE.Scene();
+    // const color = 0xffffff;
+    // const near = 5;
+    // const far = 30;
+    // scene.fog = new THREE.Fog(color, near, far);
+
+    // Lights
+    const ambientLight = new THREE.AmbientLight("white", 0.5);
+    scene.add(ambientLight);
+
+    const directionalLight = new THREE.DirectionalLight("white", 1);
+    directionalLight.position.set(20, 40, 80);
+    directionalLight.castShadow = true;
+    scene.add(directionalLight);
+
+    // Camera
+    camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 1000);
+    camera.position.set(0, 0, 30);
+
+    // Background
+    // const loader = new THREE.TextureLoader();
+    // const texture = loader.load("assets/images/bg-6.jpg", () => {
+    //     const rt = new THREE.WebGLCubeRenderTarget(texture.image.height);
+    //     rt.fromEquirectangularTexture(renderer, texture);
+    //     scene.background = rt.texture;
+    // });
+
+    scene.background = new THREE.Color('#66FF66');
+
+    // Box
+    const sandMaterial = new THREE.MeshPhongMaterial({
+        side: THREE.DoubleSide,
+        map: new THREE.TextureLoader().load("assets/images/sand.jpg"),
+    });
+    const sand = new THREE.Mesh(
+        new THREE.PlaneGeometry(200, 200, 100, 100),
+        sandMaterial
+    );
+    sand.receiveShadow = true;
+    sand.rotation.x = -Math.PI / 2;
+    sand.position.y = -12;
+    scene.add(sand);
+
+    // Models
+    const pinksoldier = new GLTFLoader();
+    pinksoldier.load("assets/models/squid_game_pinksoldier/scene.gltf", (gltf) => {
+        gltf.scene.traverse(function (node) {
+            if (node.isMesh) {
+                node.castShadow = true;
+                node.receiveShadow = true;
+                node.position.set(0, 0, -12);
+                node.scale.set(0.13, 0.13, 0.13);
+                // node.rotation.z = Math.PI;
+            }
+        });
+        scene.add(gltf.scene);
+    });
+
+    const pinksoldier_triangle1 = new GLTFLoader();
+    pinksoldier_triangle1.load("assets/models/squid_game_pinksoldier_triangle/scene.gltf", (gltf) => {
+        gltf.scene.traverse(function (node) {
+            if (node.isMesh) {
+                node.castShadow = true;
+                node.receiveShadow = true;
+                node.position.set(12, 0, -12);
+                node.scale.set(0.13, 0.13, 0.13);
+                // node.rotation.z = Math.PI;
+            }
+        });
+        scene.add(gltf.scene);
+    });
+
+    const pinksoldier_triangle2 = new GLTFLoader();
+    pinksoldier_triangle2.load("assets/models/squid_game_pinksoldier_triangle/scene.gltf", (gltf) => {
+        gltf.scene.traverse(function (node) {
+            if (node.isMesh) {
+                node.castShadow = true;
+                node.receiveShadow = true;
+                node.position.set(-12, 0, -12);
+                node.scale.set(0.13, 0.13, 0.13);
+                // node.rotation.z = Math.PI;
+            }
+        });
+        scene.add(gltf.scene);
+    });
+
+    const giant_doll = new GLTFLoader();
+    giant_doll.load("assets/models/squid_game_giant_doll/scene.gltf", (gltf) => {
+        gltf.scene.traverse(function (node) {
+            if (node.isMesh) {
+                node.castShadow = true;
+                node.receiveShadow = true;
+                node.position.set(0, 12, -2.5);
+                node.scale.set(2, 2, 2);
+                // node.rotation.z = Math.PI;
+            }
+        });
+        scene.add(gltf.scene);
+    });
+
+    const tree = new GLTFLoader();
+    tree.load("assets/models/tree/scene.gltf", (gltf) => {
+        gltf.scene.traverse(function (node) {
+            if (node.isMesh) {
+                node.castShadow = true;
+                node.receiveShadow = true;
+                node.position.set(-6, -40, -60);
+                node.scale.set(50, 50, 50);
+                // node.rotation.z = Math.PI;
+            }
+        });
+        scene.add(gltf.scene);
+    });
+
+    const people1 = new GLTFLoader();
+    people1.load("assets/models/male_running_20_frames_loop/scene.gltf", (gltf) => {
+        gltf.scene.traverse(function (node) {
+            if (node.isMesh) {
+                node.castShadow = true;
+                node.receiveShadow = true;
+                // node.position.set(0, 24, 0);
+                node.scale.set(10, 10, 10);
+                node.rotation.x = Math.PI / 2;
+                node.rotation.y = Math.PI;
+            }
+        });
+        scene.add(gltf.scene);
+    });
+
+    // Render
+    renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.shadowMap.enabled = true;
+    renderer.render(scene, camera);
+    document.body.appendChild(renderer.domElement);
+
+    // OrbitControls
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.25;
+    controls.enableZoom = true;
+};
+
+let mainLoop = function() {
+    renderer.render(scene, camera);
+    requestAnimationFrame(mainLoop);
+};
+
+init();
+mainLoop();
