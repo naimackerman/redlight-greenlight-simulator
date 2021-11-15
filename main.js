@@ -1,5 +1,6 @@
 import { OrbitControls } from "https://cdn.jsdelivr.net/npm/three@0.121.1/examples/jsm/controls/OrbitControls.js";
 import { GLTFLoader } from "https://threejsfundamentals.org/threejs/resources/threejs/r132/examples/jsm/loaders/GLTFLoader.js";
+// import { gsap } from "https://cdnjs.cloudflare.com/ajax/libs/gsap/3.8.0/gsap.min.js";
 
 /** @type {THREE.PerspectiveCamera} */
 let camera;
@@ -10,22 +11,46 @@ let renderer;
 
 let doll;
 
+const TIME_LIMIT = 15;
+
+const text = document.querySelector('.text');
 const startBtn = document.querySelector('.start-btn');
 
-let init = function() {
+async function delay(ms){
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+let n = 5;
+let loader = new Array(n); 
+for (let i=0; i<n; ++i) loader[i] = 0;
+
+function cekLoader() {
+    for (let i=0; i<n; ++i) {
+        if (loader[i] != 1) {
+            startBtn.innerText = "loading...";
+            break;
+        } 
+        if (i == n - 1) {
+            startBtn.innerText = "start";
+        }
+    }
+}
+
+// Musics
+const bgMusic = new Audio('assets/musics/bg.mp3');
+bgMusic.loop = true;
+
+let speedUp = 1;
+const soundBack = new Audio('assets/musics/robot-back.mp3');
+const soundFront = new Audio('assets/musics/robot-front.mp3');
+soundBack.playbackRate = speedUp;
+
+function init() {
     scene = new THREE.Scene();
     // const color = 0xffffff;
     // const near = 5;
     // const far = 30;
     // scene.fog = new THREE.Fog(color, near, far);
-
-    // Musics
-    const bgMusic = new Audio('assets/musics/bg.mp3');
-    bgMusic.loop = true;
-
-    async function playMusic() {
-        bgMusic.play();
-    }
 
     // Lights
     const ambientLight = new THREE.AmbientLight("white", 0.5);
@@ -128,6 +153,8 @@ let init = function() {
             }
         });
         scene.add(gltf.scene);
+        loader[0] = 1;
+        cekLoader();
     });
 
     const pinksoldier_triangle1 = new GLTFLoader();
@@ -142,6 +169,8 @@ let init = function() {
             }
         });
         scene.add(gltf.scene);
+        loader[1] = 1;
+        cekLoader();
     });
 
     const pinksoldier_triangle2 = new GLTFLoader();
@@ -156,6 +185,8 @@ let init = function() {
             }
         });
         scene.add(gltf.scene);
+        loader[2] = 1;
+        cekLoader();
     });
 
     const giant_doll = new GLTFLoader();
@@ -171,6 +202,8 @@ let init = function() {
         });
         scene.add(gltf.scene);
         doll = gltf.scene;
+        loader[3] = 1;
+        cekLoader();
     });
 
     const tree = new GLTFLoader();
@@ -185,7 +218,8 @@ let init = function() {
             }
         });
         scene.add(gltf.scene);
-        startBtn.innerText = "start";
+        loader[4] = 1;
+        cekLoader();
     });
 
     // Render
@@ -203,13 +237,68 @@ let init = function() {
 
     startBtn.addEventListener('click', () => {
         if(startBtn.innerText == "START"){
-            playMusic();
+            countTime();
             document.querySelector('.modal').style.display = "none";
         }
     });
 };
 
-let mainLoop = function() {
+function lookBackward(){
+    gsap.to(doll.rotation, {duration: .45, y: -3.15});
+    gsap.to(doll.position, {duration: .45, z: -25});
+    soundBack.play();
+    setTimeout(() => dallFacingBack = true, 5000 / speedUp);
+}
+function lookForward(){
+    gsap.to(doll.rotation, {duration: .45, y: 0});
+    gsap.to(doll.position, {duration: .45, z: 0});
+    soundFront.play();
+    setTimeout(() => dallFacingBack = false, 7000);
+}
+
+async function countTime() {
+    await delay(1000);
+    text.innerText = "Starting in 3";
+    await delay(1000);
+    text.innerText = "Starting in 2";
+    await delay(1000);
+    text.innerText = "Starting in 1";
+    await delay(1000);
+    text.innerText = "Gooo!!!";
+    await delay(1000);
+    text.innerText = "";
+    lookBackward();
+    bgMusic.play();
+    start();
+}
+
+let gameStat = "loading";
+
+function start() {
+    gameStat = "started";
+    // const progressBar = createCube({w: 8, h: .1, d: 1}, 0, 0, 0xebaa12);
+    // progressBar.position.y = 3.35;
+    // gsap.to(progressBar.scale, {duration: TIME_LIMIT, x: 0, ease: "none"});
+    setTimeout(() => {
+        if(gameStat != "ended"){
+            // text.innerText = "Time Out!!!"
+            // loseMusic.play()
+            gameStat = "ended";
+        }
+    }, TIME_LIMIT * 1000);
+    startDall();
+}
+
+let dallFacingBack = true;
+async function startDall(){
+   lookBackward();
+   await delay(5000 / speedUp);
+   lookForward();
+   await delay(7000);
+   startDall();
+}
+
+function mainLoop() {
     renderer.render(scene, camera);
     requestAnimationFrame(mainLoop);
 };
