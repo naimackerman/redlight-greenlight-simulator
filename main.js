@@ -54,16 +54,66 @@ let init = function() {
     // Box
     const sandMaterial = new THREE.MeshPhongMaterial({
         side: THREE.DoubleSide,
-        map: new THREE.TextureLoader().load("assets/images/sand.jpg"),
+        map: new THREE.TextureLoader().load("assets/images/sand-2.jpg"),
     });
     const sand = new THREE.Mesh(
-        new THREE.PlaneGeometry(200, 200, 100, 100),
+        new THREE.PlaneGeometry(800, 800, 100, 100),
         sandMaterial
     );
     sand.receiveShadow = true;
     sand.rotation.x = -Math.PI / 2;
     sand.position.y = -12;
+    sand.position.z = 240;
     scene.add(sand);
+
+    const wallMaterial = new THREE.MeshPhongMaterial({
+        side: THREE.DoubleSide,
+        map: new THREE.TextureLoader().load("assets/images/wall.jpg"),
+    });
+
+    const wall1 = new THREE.Mesh(
+        new THREE.PlaneGeometry(750, 150, 100, 100),
+        wallMaterial
+    );
+    wall1.receiveShadow = true;
+    wall1.rotation.y = -Math.PI / 2;
+    wall1.position.x = 210;
+    wall1.position.y = 60;
+    wall1.position.z = 240;
+    scene.add(wall1);
+
+    const wall2 = new THREE.Mesh(
+        new THREE.PlaneGeometry(450, 150, 100, 100),
+        wallMaterial
+    );
+    wall2.receiveShadow = true;
+    wall2.rotation.y = -Math.PI;
+    wall2.position.x = 0;
+    wall2.position.y = 60;
+    wall2.position.z = -120;
+    scene.add(wall2);
+
+    const wall3 = new THREE.Mesh(
+        new THREE.PlaneGeometry(750, 150, 100, 100),
+        wallMaterial
+    );
+    wall3.receiveShadow = true;
+    wall3.rotation.y = -Math.PI / 2;
+    wall3.position.x = -210;
+    wall3.position.y = 60;
+    wall3.position.z = 240;
+    scene.add(wall3);
+
+    const wall4 = new THREE.Mesh(
+        new THREE.PlaneGeometry(450, 150, 100, 100),
+        wallMaterial
+    );
+    wall4.receiveShadow = true;
+    wall4.rotation.y = -Math.PI;
+    wall4.position.x = 0;
+    wall4.position.y = 60;
+    wall4.position.z = 600;
+    scene.add(wall4);
 
     // Models
     const pinksoldier = new GLTFLoader();
