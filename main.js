@@ -8,6 +8,10 @@ let scene;
 /** @type {THREE.WebGLRenderer} */
 let renderer;
 
+let doll;
+
+const startBtn = document.querySelector('.start-btn');
+
 let init = function() {
     scene = new THREE.Scene();
     // const color = 0xffffff;
@@ -15,9 +19,18 @@ let init = function() {
     // const far = 30;
     // scene.fog = new THREE.Fog(color, near, far);
 
+    // Musics
+    const bgMusic = new Audio('assets/musics/bg.mp3');
+    bgMusic.loop = true;
+
+    async function playMusic() {
+        bgMusic.play();
+    }
+
     // Lights
     const ambientLight = new THREE.AmbientLight("white", 0.5);
     scene.add(ambientLight);
+
 
     const directionalLight = new THREE.DirectionalLight("white", 1);
     directionalLight.position.set(20, 40, 80);
@@ -107,6 +120,7 @@ let init = function() {
             }
         });
         scene.add(gltf.scene);
+        doll = gltf.scene;
     });
 
     const tree = new GLTFLoader();
@@ -121,21 +135,7 @@ let init = function() {
             }
         });
         scene.add(gltf.scene);
-    });
-
-    const people1 = new GLTFLoader();
-    people1.load("assets/models/male_running_20_frames_loop/scene.gltf", (gltf) => {
-        gltf.scene.traverse(function (node) {
-            if (node.isMesh) {
-                node.castShadow = true;
-                node.receiveShadow = true;
-                // node.position.set(0, 24, 0);
-                node.scale.set(10, 10, 10);
-                node.rotation.x = Math.PI / 2;
-                node.rotation.y = Math.PI;
-            }
-        });
-        scene.add(gltf.scene);
+        startBtn.innerText = "start";
     });
 
     // Render
@@ -150,6 +150,13 @@ let init = function() {
     controls.enableDamping = true;
     controls.dampingFactor = 0.25;
     controls.enableZoom = true;
+
+    startBtn.addEventListener('click', () => {
+        if(startBtn.innerText == "START"){
+            playMusic();
+            document.querySelector('.modal').style.display = "none";
+        }
+    });
 };
 
 let mainLoop = function() {
