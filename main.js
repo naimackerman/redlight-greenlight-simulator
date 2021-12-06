@@ -97,7 +97,7 @@ function init() {
     });
 
     const wall1 = new THREE.Mesh(
-        new THREE.PlaneGeometry(750, 150, 100, 100),
+        new THREE.PlaneGeometry(750, 250, 100, 100),
         wallMaterial
     );
     wall1.receiveShadow = true;
@@ -108,7 +108,7 @@ function init() {
     scene.add(wall1);
 
     const wall2 = new THREE.Mesh(
-        new THREE.PlaneGeometry(450, 150, 100, 100),
+        new THREE.PlaneGeometry(450, 250, 100, 100),
         wallMaterial
     );
     wall2.receiveShadow = true;
@@ -119,7 +119,7 @@ function init() {
     scene.add(wall2);
 
     const wall3 = new THREE.Mesh(
-        new THREE.PlaneGeometry(750, 150, 100, 100),
+        new THREE.PlaneGeometry(750, 250, 100, 100),
         wallMaterial
     );
     wall3.receiveShadow = true;
@@ -130,7 +130,7 @@ function init() {
     scene.add(wall3);
 
     const wall4 = new THREE.Mesh(
-        new THREE.PlaneGeometry(450, 150, 100, 100),
+        new THREE.PlaneGeometry(450, 250, 100, 100),
         wallMaterial
     );
     wall4.receiveShadow = true;
