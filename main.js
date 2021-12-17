@@ -13,8 +13,10 @@ let doll;
 
 const TIME_LIMIT = 15;
 
-const text = document.querySelector('.text');
+const title = document.querySelector('.title');
 const startBtn = document.querySelector('.start-btn');
+const creditBtn = document.querySelector('.credit-btn');
+const backBtn = document.querySelector('.back-btn');
 
 async function delay(ms){
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -27,17 +29,18 @@ for (let i=0; i<n; ++i) loader[i] = 0;
 function cekLoader() {
     for (let i=0; i<n; ++i) {
         if (loader[i] != 1) {
-            startBtn.innerText = "loading...";
+            startBtn.innerText = "MOHON TUNGGU...";
             break;
         } 
         if (i == n - 1) {
-            startBtn.innerText = "start";
+            startBtn.innerText = "MULAI";
         }
     }
 }
 
 // Musics
 const bgMusic = new Audio('assets/musics/bg.mp3');
+bgMusic.volume = 0.2;
 bgMusic.loop = true;
 
 let speedUp = 1;
@@ -236,10 +239,20 @@ function init() {
     controls.enableZoom = true;
 
     startBtn.addEventListener('click', () => {
-        if(startBtn.innerText == "START"){
+        if(startBtn.innerText == "MULAI"){
             countTime();
             document.querySelector('.modal').style.display = "none";
         }
+    });
+
+    creditBtn.addEventListener('click', () => {
+        document.querySelector('.modal').style.display = "none";
+        document.querySelector('.modal-credit').style.display = "block";
+    });
+
+    backBtn.addEventListener('click', () => {
+        document.querySelector('.modal').style.display = "block";
+        document.querySelector('.modal-credit').style.display = "none";
     });
 };
 
@@ -247,26 +260,32 @@ function lookBackward(){
     gsap.to(doll.rotation, {duration: .45, y: -3.15});
     gsap.to(doll.position, {duration: .45, z: -25});
     soundBack.play();
+    title.innerText = "Green Light";
+    title.style.backgroundColor = "green";
     setTimeout(() => dallFacingBack = true, 5000 / speedUp);
 }
 function lookForward(){
     gsap.to(doll.rotation, {duration: .45, y: 0});
     gsap.to(doll.position, {duration: .45, z: 0});
     soundFront.play();
+    title.innerText = "Red Light";
+    title.style.backgroundColor = "red";
     setTimeout(() => dallFacingBack = false, 7000);
 }
 
 async function countTime() {
     await delay(1000);
-    text.innerText = "Starting in 3";
+    title.innerText = "Dimulai dalam 3 hitungan mundur";
+    await delay(3000);
+    title.innerText = "3";
     await delay(1000);
-    text.innerText = "Starting in 2";
+    title.innerText = "2";
     await delay(1000);
-    text.innerText = "Starting in 1";
+    title.innerText = "1";
     await delay(1000);
-    text.innerText = "Gooo!!!";
+    title.innerText = "Ayooo!!!";
     await delay(1000);
-    text.innerText = "";
+    title.innerText = "";
     lookBackward();
     bgMusic.play();
     start();
