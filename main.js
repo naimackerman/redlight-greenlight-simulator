@@ -247,11 +247,12 @@ function init() {
 
     creditBtn.addEventListener('click', () => {
         document.querySelector('.modal').style.display = "none";
-        document.querySelector('.modal-credit').style.display = "block";
+        document.querySelector('.modal-credit').style.display = "flex";
+
     });
 
     backBtn.addEventListener('click', () => {
-        document.querySelector('.modal').style.display = "block";
+        document.querySelector('.modal').style.display = "flex";
         document.querySelector('.modal-credit').style.display = "none";
     });
 };
