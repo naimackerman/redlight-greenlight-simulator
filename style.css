@@ -89,18 +89,19 @@
   border-radius: 10px;
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
 }
 
 .profile {
-  padding: 15px 20px;
   background: #fff;
   text-align: center;
   display: flex;
-  gap: 10px;
+  gap: 24px;
 }
 
 .profile-dev {
-  margin: 10px;
   border-radius: 10px;
   padding: 12px;
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
@@ -135,7 +136,6 @@ button {
 }
 
 .back-btn {
-  margin-top: 3%;
   background-color: rgb(235, 235, 235);
 }
 
