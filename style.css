@@ -27,7 +27,8 @@
 }
 
 .modal,
-.modal-lose {
+.modal-lose,
+.modal-victory {
   position: fixed;
   top: 0;
   left: 0;
@@ -47,7 +48,13 @@
 .modal-lose {
   display: none;
 }
-.modal-credit {
+
+.modal-victory {
+  display: none;
+}
+
+.modal-credit,
+.modal-credit-last {
   position: fixed;
   top: 0;
   left: 0;
@@ -128,30 +135,30 @@ button {
 }
 
 .start-btn,
-.play-again-btn {
+.play-again-btn,
+.play-again-btn-win {
   background-color: #19caca;
   color: #fff;
 }
 
 .credit-btn,
-.close-btn {
+.back-btn,
+.close-btn,
+.close-btn-win {
   margin-top: 3%;
   background-color: rgb(235, 235, 235);
 }
 
-.back-btn {
-  background-color: rgb(235, 235, 235);
-}
-
-.start-btn:hover {
+.start-btn:hover,
+.play-again-btn,
+.play-again-btn-win {
   background-color: #0a8f8f;
 }
 
-.credit-btn:hover {
-  background-color: rgb(150, 150, 150);
-}
-
-.back-btn:hover {
+.credit-btn:hover,
+.back-btn:hover,
+.close-btn:hover,
+.close-btn-win:hover {
   background-color: rgb(150, 150, 150);
 }
 
