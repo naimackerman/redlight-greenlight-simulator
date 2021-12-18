@@ -33,6 +33,18 @@ controls.enableZoom = true;
 const listener = new THREE.AudioListener();
 camera.add( listener );
 
+// Musics
+const bgMusic = new Audio("assets/musics/bg.mp3");
+bgMusic.volume = 0.2;
+bgMusic.loop = true;
+
+let speedUp = 1;
+const soundBack = new Audio("assets/musics/robot-back.mp3");
+const soundFront = new Audio("assets/musics/robot-front.mp3");
+const countDown1 = new Audio("assets/musics/countdown-1.wav");
+const countDown2 = new Audio("assets/musics/countdown-2.wav");
+soundBack.playbackRate = speedUp;
+
 //###############ADDITIONAL STYLE#####################
 //Button Appearance
 const title = document.querySelector(".title");
@@ -48,7 +60,6 @@ async function delay(ms) {
 startBtn.addEventListener("click", () => {
   if (startBtn.innerText == "MULAI") {
     countTime();
-    isStart = 1;
     document.querySelector(".modal").style.display = "none";
   }
 });
@@ -84,33 +95,28 @@ const player = {
 };
 
 async function countTime() {
-  await delay(1000);
-  title.innerText = "Dimulai dalam 3 hitungan mundur";
-  await delay(3000);
-  title.innerText = "3";
-  await delay(1000);
-  title.innerText = "2";
-  await delay(1000);
-  title.innerText = "1";
-  await delay(1000);
-  title.innerText = "Ayooo!!!";
-  await delay(1000);
+    await delay(1000);
+    title.innerText = "Dimulai dalam 3 hitungan mundur";
+    await delay(3000);
+    countDown1.play();
+    title.innerText = "3";
+    await delay(1000);
+    countDown1.play();
+    title.innerText = "2";
+    await delay(1000);
+    countDown1.play();
+    title.innerText = "1";
+    await delay(1000);
+    countDown2.play();
+    title.innerText = "Ayooo!!!";
+    await delay(1000);
+    title.innerText = "";
+    lookBackward();
+    isStart = 1;
+    bgMusic.play();
 
-  title.innerText = "";
-
-  bgMusic.play();
-  start();
 }
-
-// Musics
-const bgMusic = new Audio("assets/musics/bg.mp3");
-bgMusic.volume = 0.2;
-bgMusic.loop = true;
-
-let speedUp = 1;
-const soundBack = new Audio("assets/musics/robot-back.mp3");
-const soundFront = new Audio("assets/musics/robot-front.mp3");
-soundBack.playbackRate = speedUp;
+let dallFacingBack = true;
 
 //Doll Action
 function lookBackward() {
@@ -307,14 +313,14 @@ function onStart() {
         loadedAssets++;
     });
 
-  onStartSkybox();
-  onStartFloor();
-  onStartSoldier();
-  onStartDoll();
-  onStartPlayer();
-  onStartTree();
+    onStartSkybox();
+    onStartFloor();
+    onStartSoldier();
+    onStartDoll();
+    onStartPlayer();
+    onStartTree();
 
-  camera.position.set(0, 20, 100);
+    camera.position.set(0, 20, 100);
 }
 
 let lastState = "idle";
@@ -426,7 +432,6 @@ function onUpdate(dt) {
     onUpdatePlayer(dt);
     camera.lookAt(player.handler.position);
   }
-  // camera.position.set(0, 15, player.handler.position.z + 15);
 }
 
 function render() {
