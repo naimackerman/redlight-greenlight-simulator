@@ -1,37 +1,37 @@
 import * as THREE from "https://cdn.skypack.dev/three";
 import { FBXLoader } from "https://cdn.skypack.dev/three/examples/jsm/loaders/FBXLoader.js";
 import { OrbitControls } from "https://cdn.jsdelivr.net/npm/three@0.121.1/examples/jsm/controls/OrbitControls.js";
+
 let isStart = 0;
-const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(
-  75,
-  window.innerWidth / window.innerHeight,
-  1,
-  1000
-);
-const ambientLight = new THREE.AmbientLight("white", 0.1);
-scene.add(ambientLight);
-
-const directionalLight = new THREE.DirectionalLight("white", 0.1);
-directionalLight.position.set(20, 40, 600);
-directionalLight.castShadow = true;
-scene.add(directionalLight);
-
+const fbxLoader = new FBXLoader();
 const clock = new THREE.Clock();
-const loader = new FBXLoader();
 
-const listener = new THREE.AudioListener();
-camera.add(listener);
+// Scene
+const scene = new THREE.Scene();
+const color = 0xffffff;
+const near = 5;
+const far = 30;
+// scene.fog = new THREE.Fog(color, near, far);
 
-const renderer = new THREE.WebGLRenderer();
+// Camera
+const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 1000);
+
+// Render
+const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setClearColor(new THREE.Color(1, 1, 1));
 renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.shadowMap.enabled = true;
+renderer.render(scene, camera);
 document.body.appendChild(renderer.domElement);
 
+// OrbitControls
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 controls.dampingFactor = 0.25;
 controls.enableZoom = true;
+
+const listener = new THREE.AudioListener();
+camera.add( listener );
 
 //###############ADDITIONAL STYLE#####################
 //Button Appearance
@@ -66,20 +66,23 @@ backBtn.addEventListener("click", () => {
 playAgainBtn.addEventListener("click", () => {
   window.location.reload();
 });
+
 closeBtn.addEventListener("click", () => {
   window.close();
 });
+
 const player = {
-  mixer: null,
-  handler: null,
-  actions: {
-    idle: null,
-    walking: null,
-    death: null,
-  },
-  victory: false,
-  death: false,
+    mixer: null,
+    handler: null,
+    actions: {
+        idle: null,
+        walking: null,
+        death: null,
+    },
+    victory: false,
+    death: false,
 };
+
 async function countTime() {
   await delay(1000);
   title.innerText = "Dimulai dalam 3 hitungan mundur";
@@ -98,6 +101,7 @@ async function countTime() {
   bgMusic.play();
   start();
 }
+
 // Musics
 const bgMusic = new Audio("assets/musics/bg.mp3");
 bgMusic.volume = 0.2;
@@ -107,6 +111,7 @@ let speedUp = 1;
 const soundBack = new Audio("assets/musics/robot-back.mp3");
 const soundFront = new Audio("assets/musics/robot-front.mp3");
 soundBack.playbackRate = speedUp;
+
 //Doll Action
 function lookBackward() {
   soundBack.play();
@@ -114,12 +119,14 @@ function lookBackward() {
   title.style.backgroundColor = "green";
   setTimeout(() => (dallFacingBack = true), 5000 / speedUp);
 }
+
 function lookForward() {
   soundFront.play();
   title.innerText = "Red Light";
   title.style.backgroundColor = "red";
   setTimeout(() => (dallFacingBack = false), 7000);
 }
+
 function gameLose() {
   soundFront.play();
   title.innerText = "Anda Kalah";
@@ -147,7 +154,7 @@ const totalAssets = 13;
 
 function onStartSkybox() {
   const ctLoader = new THREE.CubeTextureLoader();
-  ctLoader.setPath("textures/sky/");
+  ctLoader.setPath("assets/images/sky/");
 
   ctLoader.load(
     ["px.jpg", "nx.jpg", "py.jpg", "ny.jpg", "pz.jpg", "nz.jpg"],
@@ -158,126 +165,114 @@ function onStartSkybox() {
   );
 }
 
-function onStartMap() {
-  loader.load("assets/models/soldier/source/resources/squid3.fbx", (model) => {
-    model.name = "Soldier";
-    model.position.set(0, -3, 25);
-    model.rotation.y = THREE.Math.degToRad(180);
-    model.rotation.x = THREE.Math.degToRad(90);
-    model.rotation.z = THREE.Math.degToRad(90);
-    model.scale.multiplyScalar(0.1);
-    soldier.handler = model;
-    scene.add(model);
-    loadedAssets++;
-  });
+function onStartSoldier() {
+    fbxLoader.load("assets/models/squid-game-guards/source/guards.fbx", (model) => {
+        model.name = 'Soldier1';
+        model.position.set(-20, -0.1, -40);
+        model.scale.multiplyScalar(0.08);
+        model.castShadow = true;
+        model.receiveShadow = true;
+        scene.add(model);
+        loadedAssets++;
+    });
+
+    fbxLoader.load("assets/models/squid-game-guards/source/guards.fbx", (model) => {
+        model.name = 'Soldier2';
+        model.position.set(20, -0.1, -40);
+        model.scale.multiplyScalar(0.08);
+        model.castShadow = true;
+        model.receiveShadow = true;
+        scene.add(model);
+        loadedAssets++;
+    });
 }
 
 function onStartFloor() {
-  const sandMaterial = new THREE.MeshPhongMaterial({
-    side: THREE.DoubleSide,
-    map: new THREE.TextureLoader().load("assets/images/sand-2.jpg"),
-  });
-  const sand = new THREE.Mesh(
-    new THREE.PlaneGeometry(800, 800, 100, 100),
-    sandMaterial
-  );
-  sand.receiveShadow = true;
-  sand.rotation.x = -Math.PI / 2;
-  sand.position.y = -12;
-  sand.position.z = 240;
-  loadedAssets++;
-  scene.add(sand);
+    const textureLoader = new THREE.TextureLoader();
 
-  const wallMaterial = new THREE.MeshPhongMaterial({
-    side: THREE.DoubleSide,
-    map: new THREE.TextureLoader().load("assets/images/wall.jpg"),
-  });
+    const textureRepeat = 100;
+    textureLoader.load('./assets/images/sand/albedo.jpg', (albedo) => {
+        loadedAssets++;
+        albedo.wrapS = THREE.RepeatWrapping;
+        albedo.wrapT = THREE.RepeatWrapping;
+        albedo.repeat.multiplyScalar(textureRepeat);
+        textureLoader.load('./assets/images/sand/normal.jpg', (normal) => {
+            loadedAssets++;
+            normal.wrapS = THREE.RepeatWrapping;
+            normal.wrapT = THREE.RepeatWrapping;
+            normal.repeat.multiplyScalar(textureRepeat);
+            const geometry = new THREE.PlaneGeometry( 1, 1 );
+            const material = new THREE.MeshStandardMaterial( {
+                map: albedo,
+                normalMap: normal
+            } );
+            const plane = new THREE.Mesh( geometry, material );
+            plane.scale.multiplyScalar(100);
+            plane.rotation.x = THREE.Math.degToRad(-90);
+            scene.add( plane );
+        });
+    });
 
-  const wall1 = new THREE.Mesh(
-    new THREE.PlaneGeometry(750, 250, 100, 100),
-    wallMaterial
-  );
-  wall1.receiveShadow = true;
-  wall1.rotation.y = -Math.PI / 2;
-  wall1.position.x = 210;
-  wall1.position.y = 60;
-  wall1.position.z = 240;
-  scene.add(wall1);
-  loadedAssets++;
-
-  const wall2 = new THREE.Mesh(
-    new THREE.PlaneGeometry(450, 250, 100, 100),
-    wallMaterial
-  );
-  wall2.receiveShadow = true;
-  wall2.rotation.y = -Math.PI;
-  wall2.position.x = 0;
-  wall2.position.y = 60;
-  wall2.position.z = -120;
-  scene.add(wall2);
-  loadedAssets++;
-
-  const wall3 = new THREE.Mesh(
-    new THREE.PlaneGeometry(750, 250, 100, 100),
-    wallMaterial
-  );
-  wall3.receiveShadow = true;
-  wall3.rotation.y = -Math.PI / 2;
-  wall3.position.x = -210;
-  wall3.position.y = 60;
-  wall3.position.z = 240;
-  scene.add(wall3);
-  loadedAssets++;
-
-  const wall4 = new THREE.Mesh(
-    new THREE.PlaneGeometry(450, 250, 100, 100),
-    wallMaterial
-  );
-  wall4.receiveShadow = true;
-  wall4.rotation.y = -Math.PI;
-  wall4.position.x = 0;
-  wall4.position.y = 60;
-  wall4.position.z = 600;
-  scene.add(wall4);
+    const geometry = new THREE.BoxGeometry( 100, 0.1, 0.1 );
+    const material1 = new THREE.MeshBasicMaterial( {color: "green"} );
+    const material2 = new THREE.MeshBasicMaterial( {color: "red"} );
+    const cube1 = new THREE.Mesh( geometry, material1 );
+    const cube2 = new THREE.Mesh( geometry, material2 );
+    cube1.position.set(0, 0, -25);
+    cube2.position.set(0, 0, 45);
+    scene.add( cube1 );
+    scene.add( cube2 );
 }
 
 function onStartDoll() {
-  loader.load("models/doll/doll.fbx", (model) => {
-    model.name = "Doll";
-    model.position.set(0, -15, -2.5);
-    model.rotation.y = THREE.Math.degToRad(180);
-    model.scale.multiplyScalar(10);
+    fbxLoader.load("assets/models/squid-game-giant-doll/source/squidGame_Doll.fbx", (model) => {
+        model.name = 'Doll';
+        model.position.set(0, 4.5, -30);
+        model.rotation.y = THREE.Math.degToRad(180);
+        model.scale.multiplyScalar(0.01);
+        model.castShadow = true;
+        model.receiveShadow = true;
+        doll.handler = model;
+        scene.add(model);
+        loadedAssets++;
+    });
+}
 
-    doll.handler = model;
-    scene.add(model);
-    loadedAssets++;
-  });
+function onStartTree() {
+    fbxLoader.load("assets/models/treea/source/heroTree.fbx", (model) => {
+        model.name = 'Tree';
+        model.position.set(0, 0, -40);
+        model.scale.multiplyScalar(0.1);
+        model.castShadow = true;
+        model.receiveShadow = true;
+        scene.add(model);
+        loadedAssets++;
+    });
 }
 
 function onStartPlayer() {
-  loader.load("models/player/character.fbx", (model) => {
+  fbxLoader.load("assets/models/player/character.fbx", (model) => {
     model.name = "Player";
-    model.scale.multiplyScalar(0.1);
+    model.scale.multiplyScalar(0.03);
+    model.position.set(0, 0, 47);
 
     player.handler = model;
     player.mixer = new THREE.AnimationMixer(model);
-    player.handler.position.y = -10;
-    player.handler.position.z = 500;
 
-    loader.load("models/player/animations/walking.fbx", (asset) => {
+    fbxLoader.load("assets/models/player/animations/walking.fbx", (asset) => {
       const walkingAnimation = asset.animations[0];
       player.actions.walking = player.mixer.clipAction(walkingAnimation);
       loadedAssets++;
     });
 
-    loader.load("models/player/animations/idle.fbx", (asset) => {
+    fbxLoader.load("assets/models/player/animations/idle.fbx", (asset) => {
       const idleAnimation = asset.animations[0];
       player.actions.idle = player.mixer.clipAction(idleAnimation);
       player.actions.idle.play();
       loadedAssets++;
     });
 
-    loader.load("models/player/animations/death.fbx", (asset) => {
+    fbxLoader.load("assets/models/player/animations/death.fbx", (asset) => {
       const deathAnimation = asset.animations[0];
       player.actions.death = player.mixer.clipAction(deathAnimation);
       player.actions.death.clampWhenFinished = true;
@@ -291,30 +286,35 @@ function onStartPlayer() {
 }
 
 function onStart() {
-  const light = new THREE.AmbientLight(0xffffff, 0.75); // soft white light
-  scene.add(light);
+    // Lights
+    const ambientLight = new THREE.AmbientLight("white", 0.5);
+    scene.add(ambientLight);
 
-  const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
-  scene.add(directionalLight);
+    const directionalLight = new THREE.DirectionalLight("white", 1);
+    directionalLight.position.set(20, 40, 80);
+    directionalLight.castShadow = true;
+    scene.add(directionalLight);
 
-  const audioLoader = new THREE.AudioLoader();
-  audioLoader.load("sfx/gun.wav", (buffer) => {
-    gunSound.setBuffer(buffer);
-    loadedAssets++;
-  });
+    // Audio
+    const audioLoader = new THREE.AudioLoader();
+    audioLoader.load('./assets/sfx/gun.wav', (buffer) => {
+        gunSound.setBuffer(buffer);
+        loadedAssets++;
+    });
 
-  audioLoader.load("sfx/victory.wav", (buffer) => {
-    victorySound.setBuffer(buffer);
-    loadedAssets++;
-  });
+    audioLoader.load('./assets/sfx/victory.wav', (buffer) => {
+        victorySound.setBuffer(buffer);
+        loadedAssets++;
+    });
 
   onStartSkybox();
   onStartFloor();
-  onStartMap();
+  onStartSoldier();
   onStartDoll();
   onStartPlayer();
+  onStartTree();
 
-  camera.position.set(0, 25, 550);
+  camera.position.set(0, 20, 100);
 }
 
 let lastState = "idle";
@@ -424,6 +424,7 @@ function onUpdate(dt) {
   if (isStart == 1) {
     onUpdateDoll(dt);
     onUpdatePlayer(dt);
+    camera.lookAt(player.handler.position);
   }
   // camera.position.set(0, 15, player.handler.position.z + 15);
 }
