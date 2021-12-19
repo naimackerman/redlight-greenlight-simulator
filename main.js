@@ -34,7 +34,7 @@ document.body.appendChild(renderer.domElement);
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 controls.dampingFactor = 0.25;
-controls.enableZoom = true;
+controls.enableZoom = false;
 
 const listener = new THREE.AudioListener();
 camera.add(listener);
@@ -373,7 +373,7 @@ function onStartFloor() {
       });
       const plane = new THREE.Mesh(geometry, material);
       plane.scale.multiplyScalar(100);
-      plane.rotation.x = THREE.Math.degToRad(0);
+      plane.rotation.x = THREE.Math.degToRad(180);
       plane.position.z = 50;
       plane.position.y = -35;
       scene.add(plane);
@@ -421,7 +421,7 @@ function onStartFloor() {
       });
       const plane = new THREE.Mesh(geometry, material);
       plane.scale.multiplyScalar(100);
-      plane.rotation.y = THREE.Math.degToRad(90);
+      plane.rotation.y = THREE.Math.degToRad(-90);
       plane.position.x = 50;
       plane.position.y = -35;
       scene.add(plane);
