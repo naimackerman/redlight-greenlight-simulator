@@ -554,7 +554,7 @@ function onStart() {
   scene.add(directionalLight);
 
   //Kalau mau lihat arah cahaya
-  scene.add(new THREE.CameraHelper(directionalLight.shadow.camera));
+  // scene.add(new THREE.CameraHelper(directionalLight.shadow.camera));
 
   // Audio
   const audioLoader = new THREE.AudioLoader();
